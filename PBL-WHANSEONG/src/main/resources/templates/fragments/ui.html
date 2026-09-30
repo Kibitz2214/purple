@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  이수구분 배지. 같은 4단 분기가 화면마다 반복되던 것을 한 곳으로 모은 것.
+  사용: <span th:replace="~{fragments/ui :: categoryBadge(${course.category})}"></span>
+-->
+<span th:fragment="categoryBadge(category)" class="badge"
+      th:classappend="${category.name() == 'MAJOR_REQUIRED'} ? 'badge-major-required'
+                    : (${category.name() == 'MAJOR_ELECTIVE'} ? 'badge-major-elective'
+                    : (${category.name() == 'GENERAL_REQUIRED'} ? 'badge-general-required' : 'badge-general-elective'))"
+      th:text="${category.label}">이수구분</span>
+
+<!--
+  이수구분별 진행률 막대 한 줄.
+  사용: <div th:replace="~{fragments/ui :: progressRow(${p})}"></div>
+-->
+<div th:fragment="progressRow(p)" class="grad-progress">
+    <div class="grad-progress-head">
+        <span th:replace="~{fragments/ui :: categoryBadge(${p.category})}"></span>
+        <span class="credits" th:text="${p.completedCredits} + ' / ' + ${p.requiredCredits} + '학점'"></span>
+        <span th:if="${p.satisfied}" class="grad-status grad-status-ok">충족</span>
+        <span th:unless="${p.satisfied}" class="grad-status grad-status-short"
+              th:text="${p.shortfall} + '학점 부족'"></span>
+    </div>
+    <div class="progress-bar">
+        <div class="progress-bar-fill"
+             th:classappend="${p.satisfied} ? 'progress-bar-fill-ok'"
+             th:style="'width:' + ${p.requiredCredits == 0 ? 100
+                     : (p.completedCredits * 100 / p.requiredCredits > 100 ? 100
+                     : p.completedCredits * 100 / p.requiredCredits)} + '%'"></div>
+    </div>
+</div>
+
+</body>
+</html>

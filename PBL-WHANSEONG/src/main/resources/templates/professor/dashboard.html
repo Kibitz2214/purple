@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교수 홈 · 창신대 수강신청</title>
+    <link rel="icon" type="image/png" th:href="@{/images/changshin-logo.png}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/professor-nav :: topbar(${staff}, 'home')}"></div>
+
+<div class="container">
+
+    <h2 class="page-title" th:text="${staff.name} + ' ' + ${staff.role.label} + '님, 안녕하세요'">교수님</h2>
+    <p class="subtitle">
+        담당 강의 현황과 학생들이 남긴 강의평가를 확인하고, 학과 졸업요건을 등록할 수 있습니다.
+        여기서 등록한 졸업요건은 학생들의 졸업요건 분석 화면에 그대로 반영됩니다.
+    </p>
+
+    <div class="stat-grid">
+        <div class="stat-tile">
+            <div class="label" th:text="${staff.professor} ? '담당 강의' : '학과 강의'">담당 강의</div>
+            <div class="value"><span th:text="${myCourses.size()}">0</span><small>개</small></div>
+        </div>
+        <div class="stat-tile">
+            <div class="label">수강 인원</div>
+            <div class="value"><span th:text="${totalStudents}">0</span><small>명</small></div>
+        </div>
+        <div class="stat-tile">
+            <div class="label">평균 평점</div>
+            <div class="value">
+                <span th:text="${avgRating > 0} ? ${#numbers.formatDecimal(avgRating, 1, 1)} : '-'">-</span>
+                <small th:if="${avgRating > 0}">/ 5.0</small>
+            </div>
+        </div>
+        <div class="stat-tile">
+            <div class="label">받은 강의평가</div>
+            <div class="value"><span th:text="${reviewCount}">0</span><small>건</small></div>
+        </div>
+        <div class="stat-tile">
+            <div class="label">등록된 졸업요건</div>
+            <div class="value"><span th:text="${requirementCount}">0</span><small>건</small></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="page-title" th:text="${staff.professor} ? '담당 강의' : '학과 강의'">담당 강의</h2>
+        <p class="subtitle" th:if="${staff.professor}">
+            강의에 등록된 교수명이 <b th:text="${staff.name}">이름</b>과 같은 강의를 담당 강의로 봅니다.
+        </p>
+        <p class="subtitle" th:unless="${staff.professor}">
+            조교 계정은 소속 학과(<b th:text="${staff.department}">학과</b>)의 전체 강의를 조회합니다.
+        </p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>과목코드</th>
+                    <th>과목명</th>
+                    <th>이수구분</th>
+                    <th>시간</th>
+                    <th>강의실</th>
+                    <th>수강 인원</th>
+                    <th>평점</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${myCourses}">
+                    <td th:text="${c.courseCode}"></td>
+                    <td>
+                        <span class="course-link" th:text="${c.name}"></span>
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${c.category.name() == 'MAJOR_REQUIRED'} ? 'badge-major-required'
+                                            : (${c.category.name() == 'MAJOR_ELECTIVE'} ? 'badge-major-elective'
+                                            : (${c.category.name() == 'GENERAL_REQUIRED'} ? 'badge-general-required' : 'badge-general-elective'))"
+                              th:text="${c.category.label}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${c.scheduleLabel}"></span>
+                        <small class="time-range" th:text="${c.timeRange}"></small>
+                    </td>
+                    <td th:text="${c.classroom}"></td>
+                    <td class="num" th:text="${c.enrolledCount} + ' / ' + ${c.capacity}"></td>
+                    <td>
+                        <span th:if="${c.rated}" class="rating"
+                              th:text="'★ ' + ${#numbers.formatDecimal(c.avgRating, 1, 1)}"></span>
+                        <span th:unless="${c.rated}" class="rating-none">평가 없음</span>
+                    </td>
+                </tr>
+                <tr th:if="${myCourses.isEmpty()}" class="empty-row">
+                    <td colspan="7">
+                        담당 강의가 없습니다. 강의에 등록된 교수명과 계정 이름이 같은지 확인해 주세요.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

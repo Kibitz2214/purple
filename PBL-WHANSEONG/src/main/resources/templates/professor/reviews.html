@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강의평가 · 창신대 수강신청</title>
+    <link rel="icon" type="image/png" th:href="@{/images/changshin-logo.png}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/professor-nav :: topbar(${staff}, 'reviews')}"></div>
+
+<div class="container">
+
+    <h2 class="page-title">내 평점 · 강의평가</h2>
+    <p class="subtitle">
+        담당 강의에 학생들이 남긴 평점과 후기입니다. 강의별 평균 평점은 학생들이 보는 강의 목록에도 함께 표시됩니다.
+    </p>
+
+    <div class="stat-grid">
+        <div class="stat-tile">
+            <div class="label">전체 평균 평점</div>
+            <div class="value">
+                <span th:text="${avgRating > 0} ? ${#numbers.formatDecimal(avgRating, 1, 1)} : '-'">-</span>
+                <small th:if="${avgRating > 0}">/ 5.0</small>
+            </div>
+        </div>
+        <div class="stat-tile">
+            <div class="label">받은 후기</div>
+            <div class="value"><span th:text="${reviews.size()}">0</span><small>건</small></div>
+        </div>
+        <div class="stat-tile">
+            <div class="label">평가 대상 강의</div>
+            <div class="value"><span th:text="${myCourses.size()}">0</span><small>개</small></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="page-title">강의별 평점</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>과목코드</th>
+                    <th>과목명</th>
+                    <th>시간</th>
+                    <th>수강 인원</th>
+                    <th>평균 평점</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${myCourses}">
+                    <td th:text="${c.courseCode}"></td>
+                    <td><span class="course-link" th:text="${c.name}"></span></td>
+                    <td>
+                        <span th:text="${c.scheduleLabel}"></span>
+                        <small class="time-range" th:text="${c.timeRange}"></small>
+                    </td>
+                    <td class="num" th:text="${c.enrolledCount} + ' / ' + ${c.capacity}"></td>
+                    <td>
+                        <span th:if="${c.rated}" class="rating"
+                              th:text="'★ ' + ${#numbers.formatDecimal(c.avgRating, 1, 1)}"></span>
+                        <span th:unless="${c.rated}" class="rating-none">평가 없음</span>
+                    </td>
+                </tr>
+                <tr th:if="${myCourses.isEmpty()}" class="empty-row">
+                    <td colspan="5">담당 강의가 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="page-title">학생 후기</h2>
+        <p class="subtitle">최근에 등록된 후기부터 보여 줍니다.</p>
+
+        <div th:each="r : ${reviews}" class="review-item">
+            <div class="review-head">
+                <span class="rating"
+                      th:text="${'★'.repeat(r.rating)} + ${'☆'.repeat(5 - r.rating)}"></span>
+                <span class="badge badge-soft" th:text="${r.course.name}"></span>
+                <span class="review-author" th:text="${r.student.name}"></span>
+                <span class="review-date"
+                      th:text="${#temporals.format(r.updatedAt, 'yyyy-MM-dd')}"></span>
+            </div>
+            <div class="review-body" th:text="${r.comment}"></div>
+        </div>
+
+        <p th:if="${reviews.isEmpty()}" style="text-align:center; color:var(--text-faint); padding:36px 0;">
+            아직 등록된 강의평가가 없습니다.
+        </p>
+    </div>
+
+</div>
+</body>
+</html>

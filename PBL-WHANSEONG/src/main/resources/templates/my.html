@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 신청내역 · 창신대 수강신청</title>
+    <link rel="icon" type="image/png" th:href="@{/images/changshin-logo.png}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/courses}">
+        <img class="brand-logo" th:src="@{/images/changshin-logo.png}" alt="창신대학교 로고">
+        <span>창신대 수강신청 <small>맞춤 수강 도우미</small></span>
+    </a>
+    <nav>
+        <a th:href="@{/courses}">강의 목록</a>
+        <a th:href="@{/recommend}">추천 시간표</a>
+        <a th:href="@{/my}" class="active">내 신청내역</a>
+        <a th:href="@{/graduation}">졸업요건</a>
+    </nav>
+    <div class="user">
+        <span th:text="${student.name} + ' (' + ${student.department} + ' ' + ${student.grade} + '학년)'">학생</span>
+        <a th:href="@{/logout}">로그아웃</a>
+    </div>
+</header>
+
+<div class="container">
+
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <h2 class="page-title" th:text="${student.name} + ' 님의 수강신청 내역'">내 신청내역</h2>
+    <p class="subtitle">
+        이번 학기에 신청한 강의와, 지금까지 이수 완료한 과목을 함께 보여 줍니다.
+    </p>
+
+    <!-- 핵심 숫자를 먼저 보여 준다 -->
+    <div class="stat-grid">
+        <div class="stat-tile">
+            <div class="label">신청 과목</div>
+            <div class="value"><span th:text="${enrollments.size()}">0</span><small>과목</small></div>
+        </div>
+        <div class="stat-tile">
+            <div class="label">신청 학점</div>
+            <div class="value"><span th:text="${totalCredits}">0</span><small>학점</small></div>
+        </div>
+        <div class="stat-tile">
+            <div class="label">확정한 과목</div>
+            <div class="value">
+                <span th:text="${#lists.size(enrollments.?[confirmed])}">0</span><small>과목</small>
+            </div>
+        </div>
+        <div class="stat-tile">
+            <div class="label">이수 완료 학점</div>
+            <div class="value"><span th:text="${analysis.totalCompletedCredits}">0</span><small>학점</small></div>
+        </div>
+    </div>
+
+    <!-- 신청한 강의 -->
+    <div class="card">
+        <div class="section-title">신청한 강의</div>
+        <p class="subtitle">
+            신청을 <b>확정</b>하면 별점을 매길 수 있습니다. 별을 누르면 바로 등록되고,
+            강의 목록의 평균 평점과 추천 시간표에도 반영됩니다.
+        </p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>과목코드</th>
+                    <th>과목명</th>
+                    <th>이수구분</th>
+                    <th>교수</th>
+                    <th>학점</th>
+                    <th>시간</th>
+                    <th>강의실</th>
+                    <th>상태</th>
+                    <th>별점</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="e : ${enrollments}">
+                    <td th:text="${e.course.courseCode}"></td>
+                    <td>
+                        <a th:href="@{/courses/{id}(id=${e.course.id})}" class="course-link"
+                           th:text="${e.course.name}"></a>
+                    </td>
+                    <td><span th:replace="~{fragments/ui :: categoryBadge(${e.course.category})}"></span></td>
+                    <td th:text="${e.course.professor}"></td>
+                    <td class="num" th:text="${e.course.credit}"></td>
+                    <td>
+                        <span th:text="${e.course.scheduleLabel}"></span>
+                        <small class="time-range" th:text="${e.course.timeRange}"></small>
+                    </td>
+                    <td th:text="${e.course.classroom}"></td>
+                    <td>
+                        <span th:if="${e.confirmed}" class="status-pill status-pill-ok">확정됨</span>
+                        <span th:unless="${e.confirmed}" class="status-pill status-pill-wait">미확정</span>
+                    </td>
+
+                    <!-- 확정한 강의만 별점을 매길 수 있다. 별을 누르면 곧바로 등록된다. -->
+                    <td>
+                        <div th:if="${e.confirmed}" class="rate-cell"
+                             th:with="myRating=${myRatings.containsKey(e.course.id)} ? ${myRatings.get(e.course.id)} : 0">
+                            <form method="post" th:action="@{/reviews}" class="star-rate js-star-form">
+                                <input type="hidden" name="courseId" th:value="${e.course.id}">
+                                <input type="hidden" name="redirect" value="my">
+                                <th:block th:each="n : ${ {5,4,3,2,1} }">
+                                    <input type="radio" name="rating" th:value="${n}"
+                                           th:id="'star-' + ${e.course.id} + '-' + ${n}"
+                                           th:checked="${myRating == n}">
+                                    <label th:for="'star-' + ${e.course.id} + '-' + ${n}"
+                                           th:title="${n} + '점'">★</label>
+                                </th:block>
+                            </form>
+                            <span class="rate-score" th:if="${myRating > 0}" th:text="${myRating} + '점'"></span>
+                            <form th:if="${myRating > 0}" method="post" th:action="@{/reviews/delete}">
+                                <input type="hidden" name="courseId" th:value="${e.course.id}">
+                                <input type="hidden" name="redirect" value="my">
+                                <button type="submit" class="rate-clear">취소</button>
+                            </form>
+                        </div>
+                        <span th:unless="${e.confirmed}" class="rate-locked">확정 후 평가</span>
+                    </td>
+
+                    <td>
+                        <div th:unless="${e.confirmed}" class="cell-actions">
+                            <form method="post" th:action="@{/confirm}">
+                                <input type="hidden" name="courseId" th:value="${e.course.id}">
+                                <button type="submit" class="btn btn-primary btn-sm">확정</button>
+                            </form>
+                            <form method="post" th:action="@{/cancel}">
+                                <input type="hidden" name="courseId" th:value="${e.course.id}">
+                                <input type="hidden" name="redirect" value="my">
+                                <button type="submit" class="btn btn-danger btn-sm">취소</button>
+                            </form>
+                        </div>
+                        <div th:if="${e.confirmed}" class="cell-actions">
+                            <form method="post" th:action="@{/unconfirm}">
+                                <input type="hidden" name="courseId" th:value="${e.course.id}">
+                                <button type="submit" class="btn btn-outline btn-sm">확정 해제</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${enrollments.isEmpty()}" class="empty-row">
+                    <td colspan="10">
+                        아직 신청한 강의가 없습니다.
+                        <a th:href="@{/courses}" class="course-link">강의 목록</a>에서 신청하세요.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-action">
+            <form method="post" th:action="@{/complete-confirmed}">
+                <input type="hidden" name="year" value="2026">
+                <input type="hidden" name="semester" value="1">
+                <button type="submit" class="btn btn-primary" th:disabled="${!hasConfirmed}">
+                    확정 과목 이수 완료 처리
+                </button>
+            </form>
+            <span class="note" th:if="${hasConfirmed}">
+                확정한 과목이 이수 내역으로 옮겨지고, 졸업요건 분석에 반영됩니다.
+            </span>
+            <span class="note" th:unless="${hasConfirmed}">
+                확정한 신청이 있어야 이수 완료 처리할 수 있습니다.
+            </span>
+        </div>
+    </div>
+
+    <!-- 이수 현황 -->
+    <div class="card">
+        <div class="section-title">나의 이수 현황</div>
+        <p class="subtitle">이수 완료 처리된 과목만 반영된 현황입니다.</p>
+
+        <div th:if="${analysis.hasRequirementData}">
+            <!-- th:each와 th:replace를 한 태그에 두면 조각 삽입이 먼저 처리되어 반복되지 않는다 -->
+            <th:block th:each="p : ${analysis.progressList}">
+                <div th:replace="~{fragments/ui :: progressRow(${p})}"></div>
+            </th:block>
+        </div>
+        <p th:unless="${analysis.hasRequirementData}" class="alert alert-info">
+            소속 학과의 졸업요건이 아직 등록되지 않아 이수구분별 현황을 계산할 수 없습니다.
+        </p>
+    </div>
+
+    <!-- 이수 완료 과목 -->
+    <div class="card">
+        <div class="section-title">이수 완료 과목</div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>과목명</th>
+                    <th>이수구분</th>
+                    <th>학점</th>
+                    <th>이수년도 / 학기</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${analysis.completedCourses}">
+                    <td>
+                        <a th:href="@{/courses/{id}(id=${c.course.id})}" class="course-link"
+                           th:text="${c.course.name}"></a>
+                    </td>
+                    <td><span th:replace="~{fragments/ui :: categoryBadge(${c.course.category})}"></span></td>
+                    <td class="num" th:text="${c.course.credit}"></td>
+                    <td class="num" th:text="${c.completedYear} + '년 ' + ${c.completedSemester} + '학기'"></td>
+                    <td>
+                        <form method="post" th:action="@{/uncomplete}">
+                            <input type="hidden" name="courseId" th:value="${c.course.id}">
+                            <button type="submit" class="btn btn-outline btn-sm">이수 취소</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${analysis.completedCourses.isEmpty()}" class="empty-row">
+                    <td colspan="5">아직 이수 완료된 과목이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 별을 고르면 곧바로 등록한다 (별도 저장 버튼 없이)
+    document.querySelectorAll('.js-star-form').forEach(function (form) {
+        form.addEventListener('change', function (e) {
+            if (e.target.name === 'rating') {
+                form.submit();
+            }
+        });
+    });
+</script>
+</body>
+</html>

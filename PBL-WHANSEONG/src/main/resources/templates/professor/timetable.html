@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강의 시간표 · 창신대 수강신청</title>
+    <link rel="icon" type="image/png" th:href="@{/images/changshin-logo.png}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/professor-nav :: topbar(${staff}, 'timetable')}"></div>
+
+<div class="container">
+
+    <div class="card">
+        <h2 class="page-title">내 수업 시간표</h2>
+        <p class="subtitle">
+            담당 강의를 요일 · 교시로 배치한 주간 시간표입니다.
+        </p>
+
+        <div class="table-wrap">
+            <table class="timetable">
+                <thead>
+                <tr>
+                    <th class="tt-period-head">교시<small>시간</small></th>
+                    <th th:each="day : ${timetableDays}" th:text="${day}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row, rowStat : ${timetableGrid}">
+                    <th class="tt-period-head">
+                        <span th:text="${rowStat.count}"></span>
+                        <small th:text="${periods[__${rowStat.index}__].range}"></small>
+                    </th>
+                    <th:block th:each="cell : ${row}">
+                        <td th:if="${cell.render}"
+                            th:rowspan="${cell.rowSpan}"
+                            th:classappend="${cell.label != null} ? 'tt-filled'"
+                            th:text="${cell.label}"></td>
+                    </th:block>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="filter-hint" th:if="${myCourses.isEmpty()}">
+            담당 강의가 없어 시간표가 비어 있습니다.
+        </p>
+    </div>
+
+    <div class="card">
+        <h2 class="page-title">강의별 시간 · 장소</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>과목명</th>
+                    <th>요일</th>
+                    <th>교시</th>
+                    <th>강의실</th>
+                    <th>수강 인원</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${myCourses}">
+                    <td><span class="course-link" th:text="${c.name}"></span></td>
+                    <td th:text="${c.dayOfWeek}"></td>
+                    <td class="num">
+                        <span th:text="${c.startPeriod} + '-' + ${c.endPeriod} + '교시'"></span>
+                        <small class="time-range" th:text="${c.timeRange}"></small>
+                    </td>
+                    <td th:text="${c.classroom}"></td>
+                    <td class="num" th:text="${c.enrolledCount} + ' / ' + ${c.capacity}"></td>
+                </tr>
+                <tr th:if="${myCourses.isEmpty()}" class="empty-row">
+                    <td colspan="5">담당 강의가 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

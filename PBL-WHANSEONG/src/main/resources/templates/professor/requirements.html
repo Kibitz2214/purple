@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>졸업요건 등록 · 창신대 수강신청</title>
+    <link rel="icon" type="image/png" th:href="@{/images/changshin-logo.png}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/professor-nav :: topbar(${staff}, 'requirements')}"></div>
+
+<div class="container">
+
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <h2 class="page-title">졸업요건 등록</h2>
+    <p class="subtitle">
+        여기서 등록한 이수구분별 필요 학점과 필수 지정 과목을 학생들이 <b>졸업요건 분석</b> 화면에서 그대로 보고
+        본인의 이수 현황을 진단합니다. 같은 학과·입학년도·이수구분으로 다시 저장하면 학점이 갱신됩니다.
+    </p>
+
+    <div class="card">
+        <div class="section-title">조회할 학과</div>
+        <p class="subtitle">
+            학과를 고르면 그 학과의 졸업요건이 아래에 표시되고, 이후 등록·삭제도 선택한 학과에 적용됩니다.
+        </p>
+        <form method="get" th:action="@{/professor/requirements}" class="toolbar" id="deptForm">
+            <select name="department" id="departmentSelect" required style="min-width:220px;">
+                <option th:each="d : ${departments}"
+                        th:value="${d}"
+                        th:text="${d}"
+                        th:selected="${d == department}"></option>
+            </select>
+            <button type="submit" class="btn btn-outline btn-sm">조회</button>
+            <span class="filter-hint">
+                현재 <b th:text="${department}">학과</b> 기준으로 보고 있습니다.
+            </span>
+        </form>
+        <script>
+            // 학과를 고르는 즉시 해당 학과로 전환한다 (조회 버튼을 따로 누르지 않아도 되게)
+            document.getElementById('departmentSelect').addEventListener('change', function () {
+                this.form.submit();
+            });
+        </script>
+    </div>
+
+    <div class="card">
+        <div class="section-title">
+            이수구분별 필요 학점 — <span th:text="${department}">학과</span>
+        </div>
+
+        <form method="post" th:action="@{/professor/requirements}">
+            <input type="hidden" name="department" th:value="${department}">
+            <div class="filter-grid">
+                <div class="filter-block">
+                    <label class="filter-label" for="admissionYear">적용 입학년도</label>
+                    <input type="number" id="admissionYear" name="admissionYear"
+                           min="2000" max="2035" value="2026" required
+                           style="width:100%; padding:11px 14px; border:1px solid var(--line-strong); border-radius:10px; font-size:14.5px; font-family:inherit;">
+                    <div class="filter-hint">해당 년도 이후 입학생에게 적용됩니다.</div>
+                </div>
+                <div class="filter-block">
+                    <label class="filter-label" for="category">이수구분</label>
+                    <select id="category" name="category" required
+                            style="width:100%; padding:11px 14px; border:1px solid var(--line-strong); border-radius:10px; font-size:14.5px; font-family:inherit;">
+                        <option th:each="c : ${categories}" th:value="${c.name()}" th:text="${c.label}"></option>
+                    </select>
+                </div>
+                <div class="filter-block">
+                    <label class="filter-label" for="requiredCredits">필요 학점</label>
+                    <div class="credit-input">
+                        <input type="number" id="requiredCredits" name="requiredCredits"
+                               min="0" max="200" value="30" required>
+                        <span class="unit">학점</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">졸업요건 저장</button>
+            </div>
+        </form>
+
+        <div class="table-wrap" style="margin-top:26px;">
+            <table>
+                <thead>
+                <tr>
+                    <th>입학년도</th>
+                    <th>이수구분</th>
+                    <th>필요 학점</th>
+                    <th style="width:90px;"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${requirements}">
+                    <td class="num" th:text="${r.admissionYear} + '년'"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${r.category.name() == 'MAJOR_REQUIRED'} ? 'badge-major-required'
+                                            : (${r.category.name() == 'MAJOR_ELECTIVE'} ? 'badge-major-elective'
+                                            : (${r.category.name() == 'GENERAL_REQUIRED'} ? 'badge-general-required' : 'badge-general-elective'))"
+                              th:text="${r.category.label}"></span>
+                    </td>
+                    <td class="num" th:text="${r.requiredCredits} + '학점'"></td>
+                    <td>
+                        <form method="post" th:action="@{/professor/requirements/delete}">
+                            <input type="hidden" name="id" th:value="${r.id}">
+                            <input type="hidden" name="department" th:value="${department}">
+                            <button type="submit" class="btn btn-outline btn-sm">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${requirements.isEmpty()}" class="empty-row">
+                    <td colspan="4">등록된 졸업요건이 없습니다. 위에서 이수구분별 필요 학점을 추가해 주세요.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">
+            필수 지정 과목 — <span th:text="${department}">학과</span>
+        </div>
+        <p class="subtitle">
+            반드시 이수해야 하는 과목입니다. 학생이 아직 듣지 않았다면 졸업요건 분석에서 <b>미이수 필수과목</b>으로 표시되고,
+            추천 시간표에서도 최우선으로 배치됩니다.
+        </p>
+
+        <form method="post" th:action="@{/professor/requirements/courses}" class="toolbar">
+            <input type="hidden" name="department" th:value="${department}">
+            <select name="courseId" required
+                    style="min-width:320px; padding:11px 14px; border:1px solid var(--line-strong); border-radius:10px; font-size:14.5px; font-family:inherit;">
+                <option th:each="c : ${allCourses}" th:value="${c.id}"
+                        th:text="${c.courseCode} + ' · ' + ${c.name} + ' (' + ${c.professor} + ')'"></option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm">필수 과목 추가</button>
+        </form>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>과목코드</th>
+                    <th>과목명</th>
+                    <th>이수구분</th>
+                    <th>학점</th>
+                    <th style="width:90px;"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="rc : ${requiredCourses}">
+                    <td th:text="${rc.course.courseCode}"></td>
+                    <td><span class="course-link" th:text="${rc.course.name}"></span></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${rc.course.category.name() == 'MAJOR_REQUIRED'} ? 'badge-major-required'
+                                            : (${rc.course.category.name() == 'MAJOR_ELECTIVE'} ? 'badge-major-elective'
+                                            : (${rc.course.category.name() == 'GENERAL_REQUIRED'} ? 'badge-general-required' : 'badge-general-elective'))"
+                              th:text="${rc.course.category.label}"></span>
+                    </td>
+                    <td class="num" th:text="${rc.course.credit}"></td>
+                    <td>
+                        <form method="post" th:action="@{/professor/requirements/courses/delete}">
+                            <input type="hidden" name="id" th:value="${rc.id}">
+                            <input type="hidden" name="department" th:value="${department}">
+                            <button type="submit" class="btn btn-outline btn-sm">해제</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${requiredCourses.isEmpty()}" class="empty-row">
+                    <td colspan="5">지정된 필수 과목이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

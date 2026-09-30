@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- 교수·조교 화면 공통 상단바. active에는 현재 메뉴 키를 넘긴다. -->
+<header th:fragment="topbar(staff, active)" class="topbar topbar-staff">
+    <a class="brand" th:href="@{/professor}">
+        <img class="brand-logo" th:src="@{/images/changshin-logo.png}" alt="창신대학교 로고">
+        <span>창신대 <small>교수 · 조교 페이지</small></span>
+    </a>
+    <nav>
+        <a th:href="@{/professor}" th:classappend="${active == 'home'} ? 'active'">홈</a>
+        <a th:href="@{/professor/courses}" th:classappend="${active == 'courses'} ? 'active'">담당 강의</a>
+        <a th:href="@{/professor/timetable}" th:classappend="${active == 'timetable'} ? 'active'">강의 시간표</a>
+        <a th:href="@{/professor/reviews}" th:classappend="${active == 'reviews'} ? 'active'">강의평가</a>
+        <a th:href="@{/professor/requirements}" th:classappend="${active == 'requirements'} ? 'active'">졸업요건 등록</a>
+    </nav>
+    <div class="user">
+        <span th:text="${staff.name} + ' (' + ${staff.department} + ' ' + ${staff.role.label} + ')'">교수</span>
+        <a th:href="@{/logout}">로그아웃</a>
+    </div>
+</header>
+
+</body>
+</html>

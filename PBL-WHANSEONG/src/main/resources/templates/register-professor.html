@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교수 등록 · 창신대 수강신청</title>
+    <link rel="icon" type="image/png" th:href="@{/images/changshin-logo.png}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <img th:src="@{/images/changshin-logo.png}" alt="창신대학교 로고">
+        </div>
+        <h1>교수 등록</h1>
+        <p class="desc">교수 · 조교 계정을 만듭니다</p>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <form method="post" th:action="@{/register/professor}">
+            <div class="field">
+                <label for="loginId">로그인 ID</label>
+                <input type="text" id="loginId" name="loginId" placeholder="예: prof-hong" required autofocus>
+            </div>
+            <div class="field">
+                <label for="name">이름</label>
+                <input type="text" id="name" name="name" placeholder="예: 홍길동" required>
+            </div>
+            <div class="field">
+                <label for="department">학과</label>
+                <select id="department" name="department" required>
+                    <option value="" disabled selected>학과를 선택하세요</option>
+                    <option th:each="d : ${departments}" th:value="${d}" th:text="${d}"></option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="role">구분</label>
+                <select id="role" name="role">
+                    <option th:each="r : ${staffRoles}" th:value="${r.name()}" th:text="${r.label}"></option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">등록하고 교수 페이지로 이동</button>
+        </form>
+
+        <div class="links">
+            이미 계정이 있나요? <a th:href="@{/login}">로그인</a>
+        </div>
+
+        <div class="hint">
+            <b>이름</b>은 강의에 등록된 교수명과 똑같이 입력해야 담당 강의·강의평가가 연결됩니다.
+            (예: 자료구조 담당이면 <b>홍길동</b>)<br>
+            조교로 등록하면 담당 강의 대신 <b>소속 학과 전체 강의</b>를 보게 됩니다.
+        </div>
+    </div>
+</div>
+</body>
+</html>

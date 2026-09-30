@@ -1,0 +1,665 @@
+/* ==========================================================================
+   창신대 수강신청 — 디자인 토큰
+   가독성 원칙: 순수 검정/흰색 대신 낮은 채도의 남색 계열을 쓰고, 본문 크기를
+   키우고 행간을 넓혀 장시간 봐도 눈이 덜 피로하도록 한다.
+   ========================================================================== */
+:root {
+    --navy-900: #16305f;
+    --navy-700: #1f3a93;
+    --navy-500: #3f5da8;
+    --navy-100: #e5ebf7;
+    --navy-50:  #f0f4fc;
+
+    /* 배경은 순백 대신 아주 옅은 회청색 — 화면 밝기가 낮아져 눈부심이 준다 */
+    --bg:        #eef1f6;
+    --surface:   #ffffff;
+    --surface-2: #f7f9fc;
+
+    /* 본문은 #000이 아니라 짙은 남회색 — 대비를 유지하면서 눈부심을 줄인다 */
+    --text:        #2b3450;
+    --text-soft:   #6b7590;
+    --text-faint:  #98a1b8;
+
+    --line:        #e2e7f0;
+    --line-strong: #cfd7e6;
+
+    --ok:      #1f7a4d;
+    --ok-bg:   #e6f5ec;
+    --warn:    #a8630a;
+    --warn-bg: #fdf1de;
+    --danger:  #b3372f;
+    --danger-bg:#fceceb;
+    --star:    #e0930c;
+
+    --radius:    14px;
+    --radius-sm: 10px;
+    --shadow:    0 1px 2px rgba(28, 45, 80, .05), 0 6px 18px rgba(28, 45, 80, .06);
+    --shadow-lg: 0 8px 32px rgba(28, 45, 80, .13);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    font-family: "Pretendard", "Malgun Gothic", -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    /* 본문 15px + 행간 1.75 — 기존 대비 글자와 줄 사이가 넓어져 읽기 부담이 준다 */
+    font-size: 15px;
+    line-height: 1.75;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── 상단바 ───────────────────────────────────────────────────────────── */
+.topbar {
+    background: linear-gradient(100deg, var(--navy-900), var(--navy-700));
+    color: #fff;
+    padding: 15px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 14px rgba(22, 48, 95, .22);
+}
+.topbar .brand { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+.topbar .brand small { font-weight: 400; opacity: .75; font-size: 12px; margin-left: 8px; }
+/* 로고 원본은 흰 배경 정사각 이미지 → 원형으로 잘라 남색 톱바 위에 배지처럼 얹는다 */
+.brand-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    flex-shrink: 0;
+    display: block;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, .28);
+}
+.topbar nav { display: flex; gap: 4px; margin-left: 12px; flex-wrap: wrap; }
+.topbar nav a {
+    font-size: 14.5px;
+    font-weight: 500;
+    padding: 8px 15px;
+    border-radius: 999px;
+    color: rgba(255, 255, 255, .84);
+    transition: background .15s, color .15s;
+}
+.topbar nav a:hover { background: rgba(255, 255, 255, .14); color: #fff; }
+.topbar nav a.active { background: rgba(255, 255, 255, .19); color: #fff; font-weight: 600; }
+.topbar .user {
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, .82);
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.topbar .user a { text-decoration: underline; text-underline-offset: 3px; }
+.topbar .user a:hover { color: #fff; }
+
+/* 교수용 화면은 상단바 색을 바꿔 학생 화면과 한눈에 구분되게 한다 */
+.topbar.topbar-staff { background: linear-gradient(100deg, #244a3d, #2f6a52); }
+.topbar.topbar-staff { box-shadow: 0 2px 14px rgba(36, 74, 61, .22); }
+
+/* ── 레이아웃 ─────────────────────────────────────────────────────────── */
+.container { max-width: 1120px; margin: 32px auto 64px; padding: 0 24px; }
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 30px;
+    margin-bottom: 24px;
+}
+
+h2.page-title { font-size: 21px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+p.subtitle { color: var(--text-soft); font-size: 14px; line-height: 1.7; margin-bottom: 22px; max-width: 78ch; }
+
+.section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy-700);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+}
+
+/* ── 폼 / 툴바 ────────────────────────────────────────────────────────── */
+.toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+.toolbar input[type="text"], .toolbar select,
+.field input, .field select {
+    padding: 11px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    font-size: 14.5px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color .15s, box-shadow .15s;
+}
+.toolbar input[type="text"]:focus, .toolbar select:focus,
+.field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--navy-500);
+    box-shadow: 0 0 0 3px var(--navy-100);
+}
+.toolbar input[type="text"] { min-width: 240px; }
+.toolbar label.check { font-size: 14px; display: flex; align-items: center; gap: 7px; cursor: pointer; }
+
+/* 조건 입력 그리드 (추천 시간표 편성 등) */
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+    margin-bottom: 22px;
+}
+.filter-block > .filter-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-soft);
+    letter-spacing: .02em;
+    margin-bottom: 10px;
+}
+.filter-hint { font-size: 12.5px; color: var(--text-faint); margin-top: 8px; }
+
+/* 라디오/체크박스를 알약 버튼처럼 — 클릭 영역이 넓어 고르기 쉽다 */
+.pill-group { display: flex; gap: 9px; flex-wrap: wrap; }
+.pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 62px;
+    padding: 9px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: .15s;
+    user-select: none;
+}
+.pill input { position: absolute; opacity: 0; width: 0; height: 0; }
+.pill:hover { border-color: var(--navy-500); color: var(--navy-700); }
+.pill:has(input:checked) {
+    background: var(--navy-700);
+    border-color: var(--navy-700);
+    color: #fff;
+    font-weight: 600;
+}
+.pill:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--navy-100); }
+
+.credit-input { display: flex; align-items: center; gap: 10px; }
+.credit-input input[type="number"] {
+    width: 92px;
+    padding: 11px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text);
+    text-align: center;
+}
+.credit-input input[type="number"]:focus {
+    outline: none;
+    border-color: var(--navy-500);
+    box-shadow: 0 0 0 3px var(--navy-100);
+}
+.credit-input .unit { font-size: 14px; color: var(--text-soft); }
+
+.form-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* ── 버튼 ─────────────────────────────────────────────────────────────── */
+.btn {
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 11px 20px;
+    font-size: 14.5px;
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 1.4;
+    transition: .15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+.btn-primary { background: var(--navy-700); color: #fff; }
+.btn-primary:hover { background: var(--navy-900); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #962c25; }
+.btn-ghost { background: var(--navy-50); color: var(--navy-700); border-color: var(--navy-100); }
+.btn-ghost:hover { background: var(--navy-100); }
+.btn-outline { background: var(--surface); color: var(--text-soft); border-color: var(--line-strong); }
+.btn-outline:hover { border-color: var(--navy-500); color: var(--navy-700); }
+.btn-sm { padding: 8px 14px; font-size: 13.5px; }
+.btn:disabled { background: #d5dae4; color: #8d95a8; border-color: transparent; cursor: not-allowed; }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--navy-100); }
+
+/* ── 표 ───────────────────────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; margin: 0 -4px; padding: 0 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+th, td { padding: 15px 13px; text-align: left; vertical-align: middle; }
+th {
+    background: var(--surface-2);
+    color: var(--text-soft);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: .02em;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--line-strong);
+}
+th:first-child { border-top-left-radius: var(--radius-sm); }
+th:last-child { border-top-right-radius: var(--radius-sm); }
+td { border-bottom: 1px solid var(--line); }
+/* 줄무늬 + 호버 — 행이 많아도 시선이 가로줄을 놓치지 않는다 */
+tbody tr:nth-child(even) td { background: #fbfcfe; }
+tbody tr:hover td { background: var(--navy-50); }
+tbody tr:last-child td { border-bottom: none; }
+td.num { font-variant-numeric: tabular-nums; }
+.empty-row td {
+    text-align: center;
+    color: var(--text-faint);
+    padding: 44px 16px;
+    font-size: 14px;
+    background: transparent !important;
+}
+
+/* ── 페이지 이동 ──────────────────────────────────────────────────────── */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+}
+.pagination .page-info { font-size: 13.5px; color: var(--text-soft); }
+.pagination .page-info b { color: var(--navy-700); font-variant-numeric: tabular-nums; }
+.pagination .page-of { color: var(--text-faint); margin-left: 4px; }
+
+.page-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text-soft);
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    transition: .15s;
+}
+.page-btn:hover { border-color: var(--navy-500); color: var(--navy-700); background: var(--navy-50); }
+.page-btn.current {
+    background: var(--navy-700);
+    border-color: var(--navy-700);
+    color: #fff;
+    cursor: default;
+}
+.page-btn.current:hover { background: var(--navy-700); color: #fff; }
+/* 첫/마지막 페이지에서 이동 버튼은 눌리지 않게 시각적으로도 죽인다 */
+.page-btn.disabled {
+    color: var(--text-faint);
+    background: var(--surface-2);
+    border-color: var(--line);
+    pointer-events: none;
+}
+
+@media (max-width: 720px) {
+    .pagination { justify-content: center; }
+    .page-nav { margin-left: 0; justify-content: center; }
+}
+
+/* ── 배지 / 상태 ──────────────────────────────────────────────────────── */
+.badge {
+    display: inline-block;
+    font-size: 12.5px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.badge-major-required  { background: #fdeaea; color: #b3372f; }
+.badge-major-elective  { background: #fdf1de; color: #a8630a; }
+.badge-general-required{ background: var(--navy-100); color: var(--navy-700); }
+.badge-general-elective{ background: var(--ok-bg); color: var(--ok); }
+.badge-role { background: var(--ok-bg); color: var(--ok); }
+.badge-soft { background: var(--surface-2); color: var(--text-soft); border: 1px solid var(--line); }
+
+.rating { color: var(--star); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* 평가가 하나도 없는 강의 — 0점과 헷갈리지 않도록 별 대신 문구로 보여 준다 */
+.rating-none { color: var(--text-faint); font-size: 13px; font-weight: 500; white-space: nowrap; }
+.seats-full { color: var(--danger); font-weight: 600; }
+.seats-ok { color: var(--ok); font-weight: 500; }
+
+.alert {
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+    font-size: 14.5px;
+    border: 1px solid transparent;
+}
+.alert-success { background: var(--ok-bg); color: var(--ok); border-color: #c2e6d2; }
+.alert-error { background: var(--danger-bg); color: var(--danger); border-color: #f3ccc9; }
+.alert-info { background: var(--navy-50); color: var(--navy-700); border-color: var(--navy-100); }
+
+/* ── 통계 타일 ────────────────────────────────────────────────────────── */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.stat-tile {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+}
+.stat-tile .label { font-size: 13px; color: var(--text-soft); font-weight: 600; margin-bottom: 6px; }
+.stat-tile .value {
+    font-size: 27px;
+    font-weight: 700;
+    color: var(--navy-700);
+    line-height: 1.25;
+    font-variant-numeric: tabular-nums;
+}
+.stat-tile .value small { font-size: 15px; font-weight: 600; color: var(--text-soft); margin-left: 3px; }
+
+.summary {
+    display: flex;
+    gap: 26px;
+    font-size: 14.5px;
+    color: var(--text-soft);
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 16px 18px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+}
+.summary b { color: var(--navy-700); font-size: 17px; font-variant-numeric: tabular-nums; }
+
+/* ── 인증 화면 ────────────────────────────────────────────────────────── */
+.auth-wrap { max-width: 460px; margin: 64px auto; padding: 0 20px; }
+.auth-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: var(--shadow-lg);
+    padding: 40px 36px;
+}
+.auth-logo { text-align: center; margin-bottom: 20px; }
+.auth-logo img { width: 84px; height: 84px; border-radius: 50%; display: inline-block; }
+.auth-card h1 { font-size: 23px; font-weight: 700; margin-bottom: 6px; color: var(--navy-700); text-align: center; }
+.auth-card .desc { color: var(--text-soft); font-size: 14px; margin-bottom: 26px; text-align: center; }
+.field { margin-bottom: 18px; }
+.field label { display: block; font-size: 13.5px; font-weight: 600; color: var(--text-soft); margin-bottom: 7px; }
+.field input, .field select { width: 100%; }
+.auth-card .btn { width: 100%; margin-top: 6px; justify-content: center; }
+.auth-card .links { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-soft); }
+.auth-card .links a { color: var(--navy-700); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.hint {
+    background: var(--navy-50);
+    border: 1px solid var(--navy-100);
+    border-radius: var(--radius-sm);
+    padding: 13px 15px;
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-top: 22px;
+    line-height: 1.7;
+}
+.hint b { color: var(--navy-700); }
+
+/* 학생 / 교수 로그인 전환 탭 */
+.auth-tabs {
+    display: flex;
+    gap: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px;
+    margin-bottom: 26px;
+}
+.auth-tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-soft);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    transition: .15s;
+}
+.auth-tab.active { background: var(--navy-700); color: #fff; }
+.auth-tab:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--navy-100); }
+
+/* ── 강의명 링크 ──────────────────────────────────────────────────────── */
+.course-link { color: var(--navy-700); font-weight: 600; }
+.course-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── 시간표 그리드 ────────────────────────────────────────────────────── */
+table.timetable { table-layout: fixed; text-align: center; font-size: 13.5px; }
+table.timetable th, table.timetable td {
+    border: 1px solid var(--line);
+    height: 46px;
+    padding: 7px 5px;
+    background: var(--surface);
+}
+table.timetable thead th { background: var(--surface-2); }
+table.timetable tbody tr:nth-child(even) td { background: var(--surface); }
+table.timetable tbody tr:hover td { background: var(--surface); }
+table.timetable .tt-period-head {
+    width: 84px;
+    background: var(--surface-2);
+    color: var(--text-soft);
+    font-weight: 600;
+    line-height: 1.35;
+}
+/* 교시 번호 아래에 실제 시각을 작게 — 09:00~09:50 */
+table.timetable .tt-period-head small {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--text-faint);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+/* 강의 목록의 요일·교시 아래에 붙는 실제 시각 */
+.time-range {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+}
+table.timetable td.tt-filled {
+    background: var(--navy-100) !important;
+    color: var(--navy-900);
+    font-weight: 600;
+    border-color: #c9d5ee;
+    line-height: 1.45;
+}
+table.timetable td.tt-filled small { display: block; font-weight: 500; opacity: .8; font-size: 11.5px; }
+
+/* ── 졸업요건 진행률 ──────────────────────────────────────────────────── */
+.grad-progress { margin-bottom: 20px; }
+.grad-progress:last-child { margin-bottom: 0; }
+.grad-progress-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14.5px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.grad-progress-head .cat { font-weight: 600; min-width: 72px; }
+.grad-progress-head .credits { color: var(--text-soft); font-variant-numeric: tabular-nums; }
+.grad-status { font-size: 13.5px; font-weight: 700; margin-left: auto; }
+.grad-status-ok { color: var(--ok); }
+.grad-status-short { color: var(--danger); }
+.progress-bar { background: #e4e9f2; border-radius: 999px; height: 10px; overflow: hidden; }
+.progress-bar-fill { background: var(--star); height: 100%; border-radius: 999px; transition: width .3s; }
+.progress-bar-fill-ok { background: var(--ok); }
+
+/* 전체 진행률 — 이수구분별 막대보다 굵게 해서 요약임을 드러낸다 */
+.grad-overall {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    margin-top: 22px;
+}
+.grad-overall-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.grad-overall-head .label { font-size: 14px; font-weight: 700; color: var(--text); }
+.grad-overall-head .value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy-700);
+    font-variant-numeric: tabular-nums;
+}
+.grad-overall-head .rest { font-size: 13.5px; color: var(--text-soft); margin-left: auto; }
+.grad-overall .progress-bar { height: 14px; }
+
+/* 표 안의 상태 표시 — 배지와 구분되도록 점을 함께 찍는다 */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.status-pill::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+.status-pill-ok { color: var(--ok); }
+.status-pill-wait { color: var(--text-faint); }
+
+/* 별점 입력 — 별을 눌러 바로 평가한다.
+   라디오를 5→1 순서로 두고 row-reverse로 뒤집어, 왼쪽부터 1점이 되게 하면서
+   "누른 별의 왼쪽까지 모두 채워지는" 효과를 CSS 형제 선택자만으로 얻는다. */
+.star-rate { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; position: relative; }
+.star-rate input { position: absolute; opacity: 0; width: 0; height: 0; }
+.star-rate label {
+    color: #d3d9e6;
+    cursor: pointer;
+    font-size: 19px;
+    line-height: 1;
+    padding: 0 1px;
+    transition: color .12s, transform .12s;
+}
+.star-rate label:hover,
+.star-rate label:hover ~ label,
+.star-rate input:checked ~ label { color: var(--star); }
+.star-rate label:hover { transform: scale(1.15); }
+.star-rate input:focus-visible + label { outline: 2px solid var(--navy-500); outline-offset: 2px; border-radius: 3px; }
+
+.rate-cell { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.rate-cell .rate-score { font-size: 13px; font-weight: 700; color: var(--star); font-variant-numeric: tabular-nums; }
+.rate-cell .rate-clear {
+    font-size: 12px;
+    color: var(--text-faint);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 4px;
+    font-family: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.rate-cell .rate-clear:hover { color: var(--danger); }
+.rate-locked { font-size: 12.5px; color: var(--text-faint); white-space: nowrap; }
+
+/* 추천 근거 — 이수구분별 충족/부족 상태를 한눈에 */
+.need-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+.need-chip {
+    border: 1px solid var(--line);
+    border-left-width: 4px;
+    border-radius: var(--radius-sm);
+    padding: 13px 15px;
+    background: var(--surface-2);
+}
+.need-chip-short { border-left-color: var(--danger); }
+.need-chip-ok { border-left-color: var(--ok); }
+.need-chip .need-cat { display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.need-chip .need-state { display: block; font-size: 13px; font-weight: 600; }
+.need-chip-short .need-state { color: var(--danger); }
+.need-chip-ok .need-state { color: var(--ok); }
+.need-chip .need-credits {
+    display: block;
+    font-size: 12.5px;
+    color: var(--text-faint);
+    margin-top: 3px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* 표 셀 안에 버튼이 여러 개 놓일 때 */
+.cell-actions { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+/* 카드 하단의 실행 버튼 줄 */
+.card-action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+}
+.card-action .note { font-size: 13px; color: var(--text-faint); }
+
+/* ── 강의평가 ─────────────────────────────────────────────────────────── */
+.review-item { padding: 18px 0; border-bottom: 1px solid var(--line); }
+.review-item:last-child { border-bottom: none; }
+.review-head { display: flex; align-items: center; gap: 12px; margin-bottom: 7px; flex-wrap: wrap; }
+.review-head .rating { font-size: 15px; letter-spacing: 1.5px; }
+.review-author { font-size: 13.5px; color: var(--text-soft); font-weight: 600; }
+.review-date { font-size: 12.5px; color: var(--text-faint); margin-left: auto; }
+.review-body { font-size: 14.5px; color: var(--text); line-height: 1.75; }
+
+/* ── 반응형 ───────────────────────────────────────────────────────────── */
+@media (max-width: 720px) {
+    .topbar { padding: 13px 18px; gap: 12px; }
+    .topbar .user { margin-left: 0; width: 100%; }
+    .container { padding: 0 16px; margin: 22px auto 48px; }
+    .card { padding: 22px 18px; }
+    th, td { padding: 12px 10px; }
+}

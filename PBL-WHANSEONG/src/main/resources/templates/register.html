@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학생 등록 · 창신대 수강신청</title>
+    <link rel="icon" type="image/png" th:href="@{/images/changshin-logo.png}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <img th:src="@{/images/changshin-logo.png}" alt="창신대학교 로고">
+        </div>
+        <h1>학생 등록</h1>
+        <p class="desc">기본 정보를 입력하세요</p>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <form method="post" th:action="@{/register}">
+            <div class="field">
+                <label for="studentNo">학번</label>
+                <input type="text" id="studentNo" name="studentNo" required>
+            </div>
+            <div class="field">
+                <label for="name">이름</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="field">
+                <label for="department">학과</label>
+                <select id="department" name="department" required>
+                    <option value="" disabled selected>학과를 선택하세요</option>
+                    <option th:each="d : ${departments}" th:value="${d}" th:text="${d}"></option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="grade">학년</label>
+                <input type="number" id="grade" name="grade" min="1" max="6" value="1" required>
+            </div>
+            <div class="field">
+                <label for="admissionYear">입학년도</label>
+                <input type="number" id="admissionYear" name="admissionYear" min="2000" max="2030" value="2026" required>
+            </div>
+            <button type="submit" class="btn btn-primary">등록하고 시작하기</button>
+        </form>
+
+        <div class="links">
+            이미 등록했나요? <a th:href="@{/login}">로그인</a>
+            &nbsp;·&nbsp; <a th:href="@{/register/professor}">교수 등록</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

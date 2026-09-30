@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 · 창신대 수강신청</title>
+    <link rel="icon" type="image/png" th:href="@{/images/changshin-logo.png}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <img th:src="@{/images/changshin-logo.png}" alt="창신대학교 로고">
+        </div>
+        <h1>창신대 수강신청</h1>
+        <p class="desc">맞춤 수강 도우미</p>
+
+        <div class="auth-tabs">
+            <button type="button" class="auth-tab" id="tabStudent" data-target="studentPane">학생</button>
+            <button type="button" class="auth-tab" id="tabStaff" data-target="staffPane">교수 · 조교</button>
+        </div>
+
+        <!-- 학생 로그인 -->
+        <div id="studentPane">
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <form method="post" th:action="@{/login}">
+                <div class="field">
+                    <label for="studentNo">학번</label>
+                    <input type="text" id="studentNo" name="studentNo" placeholder="예: 20210001" required>
+                </div>
+                <button type="submit" class="btn btn-primary">학생으로 로그인</button>
+            </form>
+
+            <div class="links">
+                처음이신가요? <a th:href="@{/register}">학생 등록</a>
+                &nbsp;·&nbsp; <a th:href="@{/register/professor}">교수 등록</a>
+            </div>
+
+            <div class="hint">
+                등록된 학번으로 로그인하세요. 계정이 없으면 <b>학생 등록</b>에서 새로 만들 수 있습니다.
+            </div>
+        </div>
+
+        <!-- 교수·조교 로그인 -->
+        <div id="staffPane" hidden>
+            <div th:if="${staffError}" class="alert alert-error" th:text="${staffError}"></div>
+
+            <form method="post" th:action="@{/login/professor}">
+                <div class="field">
+                    <label for="loginId">교수 · 조교 ID</label>
+                    <input type="text" id="loginId" name="loginId" placeholder="예: prof-hong" required>
+                </div>
+                <button type="submit" class="btn btn-primary">교수용 페이지로 로그인</button>
+            </form>
+
+            <div class="links">
+                계정이 없으신가요? <a th:href="@{/register/professor}">교수 등록</a>
+            </div>
+
+            <div class="hint">
+                샘플 계정 — <b>prof-hong</b> (홍길동 교수) · prof-kim (김교수) · prof-lee (이교수) · ta-cse (박조교)<br>
+                교수로 로그인하면 학생용 수강신청이 아니라 <b>교수 전용 화면</b>으로 이동합니다.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 서버가 어느 폼의 오류를 돌려줬는지에 따라 처음 열리는 탭을 정한다.
+    const hasStaffError = document.querySelector('#staffPane .alert-error') !== null;
+    const tabs = document.querySelectorAll('.auth-tab');
+
+    function activate(targetId) {
+        tabs.forEach(tab => {
+            const selected = tab.dataset.target === targetId;
+            tab.classList.toggle('active', selected);
+            document.getElementById(tab.dataset.target).hidden = !selected;
+        });
+        const firstInput = document.querySelector('#' + targetId + ' input');
+        if (firstInput) {
+            firstInput.focus();
+        }
+    }
+
+    tabs.forEach(tab => tab.addEventListener('click', () => activate(tab.dataset.target)));
+    activate(hasStaffError ? 'staffPane' : 'studentPane');
+</script>
+</body>
+</html>

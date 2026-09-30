@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>담당 강의 · 창신대 수강신청</title>
+    <link rel="icon" type="image/png" th:href="@{/images/changshin-logo.png}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/professor-nav :: topbar(${staff}, 'courses')}"></div>
+
+<div class="container">
+
+    <div class="card">
+        <h2 class="page-title" th:text="${staff.professor} ? '내가 맡고 있는 수업' : '학과 강의 목록'">담당 강의</h2>
+        <p class="subtitle" th:if="${staff.professor}">
+            강의에 등록된 교수명이 <b th:text="${staff.name}">이름</b>과 같은 강의입니다.
+            수강 인원과 평점을 한눈에 확인할 수 있습니다.
+        </p>
+        <p class="subtitle" th:unless="${staff.professor}">
+            조교 계정은 소속 학과(<b th:text="${staff.department}">학과</b>)의 전체 강의를 조회합니다.
+        </p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>과목코드</th>
+                    <th>과목명</th>
+                    <th>이수구분</th>
+                    <th>교수</th>
+                    <th>학점</th>
+                    <th>시간</th>
+                    <th>강의실</th>
+                    <th>수강 인원</th>
+                    <th>평점</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${myCourses}">
+                    <td th:text="${c.courseCode}"></td>
+                    <td><span class="course-link" th:text="${c.name}"></span></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${c.category.name() == 'MAJOR_REQUIRED'} ? 'badge-major-required'
+                                            : (${c.category.name() == 'MAJOR_ELECTIVE'} ? 'badge-major-elective'
+                                            : (${c.category.name() == 'GENERAL_REQUIRED'} ? 'badge-general-required' : 'badge-general-elective'))"
+                              th:text="${c.category.label}"></span>
+                    </td>
+                    <td th:text="${c.professor}"></td>
+                    <td class="num" th:text="${c.credit}"></td>
+                    <td>
+                        <span th:text="${c.scheduleLabel}"></span>
+                        <small class="time-range" th:text="${c.timeRange}"></small>
+                    </td>
+                    <td th:text="${c.classroom}"></td>
+                    <td class="num">
+                        <span th:text="${c.enrolledCount} + ' / ' + ${c.capacity}"
+                              th:classappend="${c.full} ? 'seats-full' : 'seats-ok'"></span>
+                    </td>
+                    <td>
+                        <span th:if="${c.rated}" class="rating"
+                              th:text="'★ ' + ${#numbers.formatDecimal(c.avgRating, 1, 1)}"></span>
+                        <span th:unless="${c.rated}" class="rating-none">평가 없음</span>
+                    </td>
+                </tr>
+                <tr th:if="${myCourses.isEmpty()}" class="empty-row">
+                    <td colspan="9">
+                        담당 강의가 없습니다. 강의에 등록된 교수명과 계정 이름이 같은지 확인해 주세요.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

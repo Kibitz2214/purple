@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>졸업요건 분석 · 창신대 수강신청</title>
+    <link rel="icon" type="image/png" th:href="@{/images/changshin-logo.png}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" th:href="@{/courses}">
+        <img class="brand-logo" th:src="@{/images/changshin-logo.png}" alt="창신대학교 로고">
+        <span>창신대 수강신청 <small>맞춤 수강 도우미</small></span>
+    </a>
+    <nav>
+        <a th:href="@{/courses}">강의 목록</a>
+        <a th:href="@{/recommend}">추천 시간표</a>
+        <a th:href="@{/my}">내 신청내역</a>
+        <a th:href="@{/graduation}" class="active">졸업요건</a>
+    </nav>
+    <div class="user">
+        <span th:text="${student.name} + ' (' + ${student.department} + ' ' + ${student.grade} + '학년)'">학생</span>
+        <a th:href="@{/logout}">로그아웃</a>
+    </div>
+</header>
+
+<div class="container">
+
+    <h2 class="page-title" th:text="${student.department} + ' 졸업요건 분석'">졸업요건 분석</h2>
+    <p class="subtitle">
+        이수구분별 학점 현황과 아직 이수하지 않은 필수 지정 과목을 보여 줍니다.
+        기준이 되는 졸업요건은 학과 교수·조교가 등록한 값입니다.
+    </p>
+
+    <!-- 졸업요건이 없으면 아래 분석이 모두 비므로 가장 먼저 알린다 -->
+    <div th:unless="${result.hasRequirementData}" class="alert alert-error">
+        이 학과(<span th:text="${student.department}">학과</span>)는 아직 졸업요건이 등록되지 않았습니다.
+        학과 교수 또는 조교가 졸업요건을 등록하면 분석 결과가 표시됩니다.
+    </div>
+
+    <th:block th:if="${result.hasRequirementData}">
+
+        <!-- 한눈에 보는 요약 -->
+        <div class="stat-grid">
+            <div class="stat-tile">
+                <div class="label">이수 학점</div>
+                <div class="value">
+                    <span th:text="${result.totalCompletedCredits}">0</span><small th:text="'/ ' + ${result.totalRequiredCredits}">/ 0</small>
+                </div>
+            </div>
+            <div class="stat-tile">
+                <div class="label">졸업까지 남은 학점</div>
+                <div class="value"><span th:text="${result.totalShortfall}">0</span><small>학점</small></div>
+            </div>
+            <div class="stat-tile">
+                <div class="label">충족한 이수구분</div>
+                <div class="value">
+                    <span th:text="${#lists.size(result.progressList.?[satisfied])}">0</span><small th:text="'/ ' + ${result.progressList.size()}">/ 0</small>
+                </div>
+            </div>
+            <div class="stat-tile">
+                <div class="label">미이수 필수과목</div>
+                <div class="value"><span th:text="${result.missingRequiredCourses.size()}">0</span><small>과목</small></div>
+            </div>
+        </div>
+
+        <!-- 이수구분별 진행률 -->
+        <div class="card">
+            <div class="section-title">이수구분별 진행률</div>
+
+            <!-- th:each와 th:replace를 한 태그에 두면 조각 삽입이 먼저 처리되어 반복되지 않는다 -->
+            <th:block th:each="p : ${result.progressList}">
+                <div th:replace="~{fragments/ui :: progressRow(${p})}"></div>
+            </th:block>
+
+            <div class="grad-overall">
+                <div class="grad-overall-head">
+                    <span class="label">전체 진행률</span>
+                    <span class="value"
+                          th:text="${result.totalCompletedCredits} + ' / ' + ${result.totalRequiredCredits} + '학점'"></span>
+                    <span class="rest" th:if="${result.totalShortfall > 0}"
+                          th:text="'졸업까지 ' + ${result.totalShortfall} + '학점 남음'"></span>
+                    <span class="rest grad-status-ok" th:unless="${result.totalShortfall > 0}">필요 학점을 모두 채웠습니다</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill"
+                         th:classappend="${result.totalShortfall == 0} ? 'progress-bar-fill-ok'"
+                         th:style="'width:' + ${result.totalRequiredCredits == 0 ? 100
+                                 : (result.totalCompletedCredits * 100 / result.totalRequiredCredits > 100 ? 100
+                                 : result.totalCompletedCredits * 100 / result.totalRequiredCredits)} + '%'"></div>
+                </div>
+            </div>
+        </div>
+
+    </th:block>
+
+    <!-- 미이수 필수과목 -->
+    <div class="card">
+        <div class="section-title">미이수 필수과목</div>
+        <p class="subtitle">졸업하려면 반드시 이수해야 하지만 아직 듣지 않은 과목입니다.</p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>과목코드</th>
+                    <th>과목명</th>
+                    <th>이수구분</th>
+                    <th>교수</th>
+                    <th>학점</th>
+                    <th>시간</th>
+                    <th>여석</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${result.missingRequiredCourses}">
+                    <td th:text="${c.courseCode}"></td>
+                    <td>
+                        <a th:href="@{/courses/{id}(id=${c.id})}" class="course-link" th:text="${c.name}"></a>
+                    </td>
+                    <td><span th:replace="~{fragments/ui :: categoryBadge(${c.category})}"></span></td>
+                    <td th:text="${c.professor}"></td>
+                    <td class="num" th:text="${c.credit}"></td>
+                    <td>
+                        <span th:text="${c.scheduleLabel}"></span>
+                        <small class="time-range" th:text="${c.timeRange}"></small>
+                    </td>
+                    <td class="num">
+                        <span th:text="${c.capacity - c.enrolledCount} + ' / ' + ${c.capacity}"
+                              th:classappend="${c.full} ? 'seats-full' : 'seats-ok'"></span>
+                    </td>
+                    <td><a th:href="@{/courses}" class="btn btn-primary btn-sm">신청하러 가기</a></td>
+                </tr>
+                <tr th:if="${result.missingRequiredCourses.isEmpty()}" class="empty-row">
+                    <td colspan="8">필수 지정 과목을 모두 이수했습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 현재 학기 시간표 -->
+    <div class="card">
+        <div class="section-title">현재 학기 시간표</div>
+        <p class="subtitle">이번 학기에 신청한 강의를 요일 · 교시로 배치한 시간표입니다.</p>
+
+        <div class="table-wrap">
+            <table class="timetable">
+                <thead>
+                <tr>
+                    <th class="tt-period-head">교시<small>시간</small></th>
+                    <th th:each="day : ${timetableDays}" th:text="${day}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row, rowStat : ${timetableGrid}">
+                    <th class="tt-period-head">
+                        <span th:text="${rowStat.count}"></span>
+                        <small th:text="${periods[__${rowStat.index}__].range}"></small>
+                    </th>
+                    <th:block th:each="cell : ${row}">
+                        <td th:if="${cell.render}"
+                            th:rowspan="${cell.rowSpan}"
+                            th:text="${cell.label}"
+                            th:classappend="${cell.label != null} ? 'tt-filled'"></td>
+                    </th:block>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
