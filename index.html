@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>조환성 포트폴리오</title>
+<meta name="description" content="창신대학교 컴퓨터공학과 조환성의 프로젝트 포트폴리오">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F2FA; --ink:#2A1838; --muted:#6E6478; --rule:#DDD3E8;
+  --violet:#6B3FA0; --lilac:#C9B6E4; --wash:#EDE5F6; --bar-base:#B9AEC6;
+  --serif:"Gowun Batang","Nanum Myeongjo",Georgia,serif;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#1A1222; --ink:#EDE6F4; --muted:#A79CB3; --rule:#3A2E46;
+    --violet:#B794E6; --lilac:#5C437A; --wash:#251A30; --bar-base:#5A4E66;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1A1222; --ink:#EDE6F4; --muted:#A79CB3; --rule:#3A2E46;
+  --violet:#B794E6; --lilac:#5C437A; --wash:#251A30; --bar-base:#5A4E66;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:var(--violet);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--violet);outline-offset:3px;border-radius:2px}
+img{max-width:100%}
+.wrap{max-width:1040px;margin:0 auto;padding:0 28px}
+
+/* top bar */
+.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0;font-size:15px}
+.top nav{display:flex;gap:22px;flex-wrap:wrap}
+.top a{color:var(--ink);text-decoration:none}
+.top a:hover{color:var(--violet)}
+.theme-btn{background:none;border:1px solid var(--rule);color:var(--ink);border-radius:999px;padding:4px 12px;font:inherit;font-size:14px;cursor:pointer}
+
+/* hero */
+.hero{padding:72px 0 88px;display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:48px;align-items:end;border-bottom:1px solid var(--rule)}
+.hero h1{font-family:var(--serif);font-weight:700;font-size:clamp(56px,11vw,128px);line-height:1;letter-spacing:-.02em;margin:0 0 28px;color:var(--ink)}
+.hero h1 span{display:block;font-size:.28em;letter-spacing:0;font-weight:400;color:var(--muted);margin-top:18px}
+.hero p.lead{font-size:20px;max-width:34em;margin:0}
+.hero aside{border-left:3px solid var(--violet);padding-left:20px;font-size:15px;color:var(--muted)}
+.hero aside dl{margin:0;display:grid;gap:12px}
+.hero aside dt{color:var(--ink);font-weight:600}
+.hero aside dd{margin:0}
+.swatch{display:flex;height:10px;margin-top:40px;grid-column:1/-1}
+.swatch i{flex:1}
+.swatch i:nth-child(1){background:var(--ink)}
+.swatch i:nth-child(2){background:var(--violet)}
+.swatch i:nth-child(3){background:var(--lilac)}
+.swatch i:nth-child(4){background:var(--wash)}
+@media (prefers-reduced-motion:no-preference){
+  .swatch i{transform:scaleX(0);transform-origin:left;animation:grow .7s cubic-bezier(.2,.7,.2,1) forwards}
+  .swatch i:nth-child(2){animation-delay:.12s}.swatch i:nth-child(3){animation-delay:.24s}.swatch i:nth-child(4){animation-delay:.36s}
+  @keyframes grow{to{transform:scaleX(1)}}
+}
+
+/* sections */
+section{padding:80px 0;border-bottom:1px solid var(--rule)}
+section > h2{font-family:var(--serif);font-size:34px;font-weight:700;margin:0 0 8px}
+section > .intro{color:var(--muted);margin:0 0 48px;max-width:40em}
+
+/* project */
+.project{display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px;padding:48px 0;border-top:1px solid var(--rule)}
+.project:first-of-type{border-top:0;padding-top:8px}
+.meta{font-size:14px;color:var(--muted)}
+.meta .period{font-family:var(--serif);font-size:22px;color:var(--ink);line-height:1.3;margin-bottom:14px}
+.meta p{margin:0 0 6px}
+.meta .status{display:inline-block;margin-top:10px;padding:2px 10px;border-radius:999px;background:var(--wash);color:var(--violet);font-weight:500}
+.project h3{font-family:var(--serif);font-size:30px;font-weight:700;margin:0;line-height:1.3}
+.project .sub{margin:6px 0 20px;color:var(--muted)}
+.project p.body{margin:0 0 20px;max-width:40em}
+.role{background:var(--wash);border-radius:6px;padding:16px 20px;margin:0 0 24px;max-width:40em}
+.role strong{color:var(--violet)}
+.features{margin:0 0 24px;padding-left:1.1em;max-width:40em}
+.features li{margin-bottom:6px}
+.features li::marker{color:var(--violet)}
+.stack{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px;padding:0;list-style:none}
+.stack li{font-size:14px;border:1px solid var(--rule);border-radius:4px;padding:3px 10px}
+.links a{font-weight:500}
+
+/* eval chart */
+.eval{margin:8px 0 28px;max-width:40em}
+.eval-head{display:flex;gap:28px;align-items:baseline;flex-wrap:wrap;margin-bottom:16px}
+.eval-big{font-family:var(--serif);font-size:44px;line-height:1}
+.eval-big small{font-family:var(--sans);font-size:14px;color:var(--muted);margin-left:6px}
+.eval-big.after{color:var(--violet)}
+.eval table{width:100%;border-collapse:collapse;font-size:14px}
+.eval td{padding:5px 0;vertical-align:middle}
+.eval td:first-child{width:92px;color:var(--muted)}
+.bars{display:grid;gap:3px}
+.bar{height:8px;border-radius:2px}
+.bar.k{background:var(--bar-base)}
+.bar.a{background:var(--violet)}
+.eval td.num{width:88px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.legend{display:flex;gap:18px;font-size:13px;color:var(--muted);margin-top:10px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.legend .k::before{background:var(--bar-base)}
+.legend .a::before{background:var(--violet)}
+
+/* skills */
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px 40px}
+.skills h3{font-family:var(--serif);font-size:20px;margin:0 0 10px}
+.skills p{margin:0;color:var(--muted);font-size:15px}
+
+/* contact */
+.contact{border-bottom:0;padding-bottom:40px}
+.contact .big{font-family:var(--serif);font-size:clamp(28px,5vw,44px);margin:0 0 20px}
+footer{padding:32px 0 48px;font-size:13px;color:var(--muted)}
+
+@media (max-width:760px){
+  .wrap{padding:0 20px}
+  .top nav{gap:14px}
+  .hero{grid-template-columns:1fr;padding:48px 0 64px;gap:36px}
+  .project{grid-template-columns:1fr;gap:16px}
+  section{padding:60px 0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <nav aria-label="페이지 이동">
+    <a href="#projects">프로젝트</a>
+    <a href="#skills">기술</a>
+    <a href="#contact">연락</a>
+  </nav>
+  <button class="theme-btn" id="themeBtn" type="button" aria-label="화면 테마 바꾸기">테마</button>
+</header>
+
+<div class="hero">
+  <div>
+    <h1>조환성<span>창신대학교 컴퓨터공학과</span></h1>
+    <p class="lead">사람이 실제로 겪는 문제를 소프트웨어로 풉니다. 이주민 정착, 금융사기, 수강신청처럼 놓치면 손해가 큰 일들을 데이터와 AI로 먼저 챙기는 서비스를 만들고 있습니다.</p>
+  </div>
+  <aside>
+    <dl>
+      <div><dt>주로 쓰는 언어</dt><dd>Python, Java, JavaScript</dd></div>
+      <div><dt>관심 분야</dt><dd>AI 에이전트, 백엔드, 다국어 서비스</dd></div>
+      <div><dt>2026년</dt><dd>프로젝트 3개 진행, 경남 AI·SW 경진대회 출전</dd></div>
+    </dl>
+  </aside>
+  <div class="swatch" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+</div>
+
+<section id="projects">
+  <h2>프로젝트</h2>
+  <p class="intro">최근 작업부터 정리했습니다. 모든 코드는 GitHub 레포에서 볼 수 있습니다.</p>
+
+  <!-- 경남 정착 도우미 -->
+  <article class="project">
+    <div class="meta">
+      <div class="period">2026.09.29 –<br>10.06</div>
+      <p>팀 duo (2인)</p>
+      <p>제4회 경남 AI·SW 경진대회<br>사회문제 해결형 AI Agent, 대학부</p>
+      <span class="status">대회 출품</span>
+    </div>
+    <div>
+      <h3>경남 정착 도우미</h3>
+      <p class="sub">다국어로 정착 로드맵을 안내하는 이주민 케어 AI 에이전트</p>
+      <p class="body">경남에 사는 이주민이 자기 말로 상황을 이야기하면, 에이전트가 숨은 필요를 알아채고 해야 할 일의 순서와 받을 수 있는 지원사업을 찾아 줍니다. "이번 달 고향에 못 보냈어요"처럼 돌려 말해도 생활비 문제로 이해하고, 폭력이나 임금체불처럼 급한 상황이면 공식 상담 창구를 먼저 안내합니다.</p>
+      <p class="role"><strong>맡은 일</strong> 지원사업·상담 창구 데이터베이스 구축, 화면(UI), 5개 언어 다국어 처리</p>
+      <ul class="features">
+        <li>한국어·영어·베트남어·일본어·중국어 상담</li>
+        <li>경남 시·군 지원사업 26건, 공식 상담 창구 8곳을 출처·확인일과 함께 정리</li>
+        <li>신청서 초안 자동 작성과 Word 다운로드, 고유식별정보 자동 삭제</li>
+        <li>체류 종료일 D-day 알림과 재방문 시 먼저 브리핑</li>
+      </ul>
+
+      <figure class="eval" aria-labelledby="evalCap">
+        <div class="eval-head">
+          <div class="eval-big">59%<small>키워드 방식</small></div>
+          <div class="eval-big after">99%<small>에이전트</small></div>
+        </div>
+        <table>
+          <caption id="evalCap" style="text-align:left;font-size:14px;color:var(--muted);padding-bottom:8px">간접 표현 100문항에서 숨은 필요를 맞힌 비율</caption>
+          <tbody>
+            <tr><td>간접 표현</td><td><div class="bars"><div class="bar k" style="width:55%"></div><div class="bar a" style="width:100%"></div></div></td><td class="num">55 → 100%</td></tr>
+            <tr><td>여러 턴 결합</td><td><div class="bars"><div class="bar k" style="width:70%"></div><div class="bar a" style="width:100%"></div></div></td><td class="num">70 → 100%</td></tr>
+            <tr><td>함정·부정</td><td><div class="bars"><div class="bar k" style="width:40%"></div><div class="bar a" style="width:95%"></div></div></td><td class="num">40 → 95%</td></tr>
+            <tr><td>다국어</td><td><div class="bars"><div class="bar k" style="width:60%"></div><div class="bar a" style="width:100%"></div></div></td><td class="num">60 → 100%</td></tr>
+            <tr><td>필요 없음</td><td><div class="bars"><div class="bar k" style="width:90%"></div><div class="bar a" style="width:100%"></div></div></td><td class="num">90 → 100%</td></tr>
+          </tbody>
+        </table>
+        <div class="legend"><span class="k">키워드 방식</span><span class="a">에이전트</span></div>
+      </figure>
+
+      <ul class="stack" aria-label="사용 기술">
+        <li>Python</li><li>FastAPI</li><li>Claude + MCP</li><li>LangChain</li><li>React 18</li><li>Vite</li><li>pytest</li>
+      </ul>
+      <p class="links"><a href="https://github.com/Kibitz2214/purple/tree/main/duo-main">코드 보기</a></p>
+    </div>
+  </article>
+
+  <!-- FinShield -->
+  <article class="project">
+    <div class="meta">
+      <div class="period">2026.03.13 –<br>12.18</div>
+      <p>팀 FinShield (6인)</p>
+      <p>캡스톤 프로젝트</p>
+      <span class="status">진행 중</span>
+    </div>
+    <div>
+      <h3>FinShield</h3>
+      <p class="sub">금융 취약계층을 위한 AI 금융사기 예방 서비스</p>
+      <p class="body">고령층처럼 사기에 노출되기 쉬운 사용자를 위해, 송금 직전에 이상 거래를 알아채고 왜 위험한지 설명해 주는 모바일 금융 서비스입니다. 의심스러운 송금은 보호자가 함께 승인해야 진행되고, 사용자들이 신고한 계좌는 블랙리스트로 모여 다음 송금을 막습니다.</p>
+      <!-- TODO: 본인이 맡은 역할로 고쳐 주세요 -->
+      <p class="role"><strong>맡은 일</strong> 팀원으로 참여 (담당 역할을 여기에 적어 주세요)</p>
+      <ul class="features">
+        <li>사용자별 이상 거래 탐지(FDS)와 설명 가능한 위험 점수(XAI)</li>
+        <li>송금 시 블랙리스트 계좌 자동 차단과 알림</li>
+        <li>보호자 교차 승인, 사기 신고, 관리자 기능</li>
+        <li>백엔드 API 9개 영역 구현 완료, 별도 AI 추론 서버 분리</li>
+      </ul>
+      <ul class="stack" aria-label="사용 기술">
+        <li>Python 3.12</li><li>FastAPI</li><li>TiDB</li><li>MongoDB</li><li>SQLAlchemy</li><li>React Native</li><li>Expo</li><li>AWS EC2</li>
+      </ul>
+      <p class="links"><a href="https://github.com/Kibitz2214/purple/tree/main/FinShield-main">앱·백엔드 코드</a> &nbsp; <a href="https://github.com/Kibitz2214/purple/tree/main/finshield-ai-main">AI 서버 코드</a></p>
+    </div>
+  </article>
+
+  <!-- 수강 도우미 -->
+  <article class="project">
+    <div class="meta">
+      <div class="period">2026</div>
+      <p>RISE사업 비교과 PBL 과제</p>
+      <span class="status">개발 중</span>
+    </div>
+    <div>
+      <h3>창신대 맞춤 수강 도우미</h3>
+      <p class="sub">졸업요건을 분석해 들어야 할 과목을 추천하는 수강신청 사이트</p>
+      <p class="body">학생이 로그인하면 지금까지 들은 과목으로 졸업요건 중 무엇이 부족한지 보여 주고, 부족한 영역의 과목 중 시간표가 겹치지 않고 자리가 남은 것을 골라 추천합니다. 교수 계정으로는 강의와 졸업요건을 관리하고 강의평가를 확인할 수 있습니다.</p>
+      <ul class="features">
+        <li>수강신청과 취소: 중복 신청, 정원 초과, 시간표 충돌 검증</li>
+        <li>학과·학번별 졸업요건 자동 분석과 미이수 과목 표시</li>
+        <li>부족 학점 기준 과목 추천과 시간표 자동 구성</li>
+        <li>강의평가(평점·후기)가 강의 목록 평점에 바로 반영</li>
+      </ul>
+      <ul class="stack" aria-label="사용 기술">
+        <li>Java 17</li><li>Spring Boot 3.5</li><li>Spring Data JPA</li><li>Thymeleaf</li><li>MySQL 8.0</li><li>Gradle</li>
+      </ul>
+      <p class="links"><a href="https://github.com/Kibitz2214/purple/tree/main/PBL-WHANSEONG">코드 보기</a></p>
+    </div>
+  </article>
+</section>
+
+<section id="skills">
+  <h2>기술</h2>
+  <p class="intro">프로젝트에서 직접 써 본 것만 적었습니다.</p>
+  <div class="skills">
+    <div><h3>백엔드</h3><p>Python, FastAPI, Pydantic, Java, Spring Boot, Spring Data JPA</p></div>
+    <div><h3>프론트엔드</h3><p>React, Vite, React Native, Expo, TypeScript, Thymeleaf</p></div>
+    <div><h3>데이터베이스</h3><p>MySQL, TiDB Cloud, MongoDB Atlas, SQLAlchemy</p></div>
+    <div><h3>AI</h3><p>Claude + MCP 도구 호출, LangChain, OpenAI API, 평가 세트 설계</p></div>
+    <div><h3>협업·도구</h3><p>Git 브랜치 전략, pytest, Gradle, AWS EC2, Claude Code</p></div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <h2 class="big">함께 이야기하고 싶다면</h2>
+  <p>코드와 작업 기록은 GitHub에 모두 올려 두었습니다.</p>
+  <p><a href="https://github.com/Kibitz2214">github.com/Kibitz2214</a></p>
+  <!-- 이메일을 추가하려면: <p><a href="mailto:you@example.com">you@example.com</a></p> -->
+</section>
+
+<footer>© 2026 조환성</footer>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('themeBtn');
+  try{var saved=localStorage.getItem('theme'); if(saved) root.setAttribute('data-theme',saved);}catch(e){}
+  btn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    if(!cur){cur=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    var next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem('theme',next);}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>
